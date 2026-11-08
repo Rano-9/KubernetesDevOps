@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logger-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: logger-app
+  template:
+    metadata:
+      labels:
+        app: logger-app
+    spec:
+      containers:
+        - name: logger-app
+          image: logger-app:latest
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+          env:
+          - name: PORT
+            value: "3000"
