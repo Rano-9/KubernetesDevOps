@@ -1,6 +1,6 @@
 FROM python:alpine
 
-ENV PORT=8080
+ENV PORT=8888
 
 WORKDIR /app
 COPY . .
@@ -11,5 +11,5 @@ RUN pip install -r requirements.txt \
     && chown -R appuser:appgroup /app
 
 USER appuser
-
-ENTRYPOINT [ "python","app.py" ]
+EXPOSE ${PORT}
+ENTRYPOINT ["sh", "-c", "gunicorn --workers 1 --capture-output --error-logfile - app:app --bind 0.0.0.0:$PORT" ]
