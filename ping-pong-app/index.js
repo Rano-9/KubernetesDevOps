@@ -12,7 +12,7 @@ const server = http.createServer((req, res) => {
     if (req.url === "/pingpong") {
         counter = updateCounter(counter)
         res.writeHead(200, { "Content-Type": "application/json" })
-        res.end(JSON.stringify({ message: "Ping recieved", counter:counter }))
+        res.end(JSON.stringify({ message: "Pong " +counter.toString() }))
         return
     }
     res.writeHead(404, { "Content-Type": "application/json" })
