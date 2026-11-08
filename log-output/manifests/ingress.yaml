@@ -6,8 +6,15 @@ spec:
   rules:
   - http:
       paths:
-      - path: /
+      - path: /pingpong
         pathType: Prefix
+        backend:
+          service:
+            name: ping-pong-app-svc
+            port:
+              number: 1235
+      - path: /
+        pathType: Exact
         backend:
           service:
             name: logger-app-svc
