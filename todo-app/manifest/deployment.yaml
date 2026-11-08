@@ -25,4 +25,4 @@ spec:
               memory: "256Mi"
           env:
           - name: PORT
-            value: "5005"
+            value: "3000"

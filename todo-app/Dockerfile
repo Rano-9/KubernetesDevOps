@@ -11,5 +11,4 @@ RUN pip install -r requirements.txt \
     && chown -R appuser:appgroup /app
 
 USER appuser
-EXPOSE ${PORT}
 ENTRYPOINT ["sh", "-c", "gunicorn --workers 1 --capture-output --error-logfile - app:app --bind 0.0.0.0:$PORT" ]
