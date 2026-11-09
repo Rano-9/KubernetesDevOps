@@ -12,10 +12,25 @@ spec:
       labels:
         app: logger-app
     spec:
+      volumes:
+        - name: shared-image
+          emptyDir: {}
+
       containers:
-        - name: logger-app
-          image: logger-app:latest
+        - name: logger-server
+          image: logger-server:latest
           imagePullPolicy: IfNotPresent
+          
+          env:
+            - name: PORT
+              value: "3000"  
+            - name: LOG_PATH
+              value: "/share/log.txt"
+
+          volumeMounts:
+            - name: shared-image
+              mountPath: "/share/"
+
           resources:
             requests:
               cpu: "100m"
@@ -23,6 +38,23 @@ spec:
             limits:
               cpu: "250m"
               memory: "256Mi"
-          env:
-          - name: PORT
-            value: "3000"
+
+        - name: logger-timestamp
+          image: logger-timestamp:latest
+          imagePullPolicy: IfNotPresent
+          
+          env: 
+            - name: LOG_PATH
+              value: "/share/log.txt"
+          
+          volumeMounts:
+            - name: shared-image
+              mountPath: "/share/"
+          
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
