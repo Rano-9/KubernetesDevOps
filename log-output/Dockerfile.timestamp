@@ -1,11 +1,18 @@
+FROM node:alpine AS builder
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci
+
+COPY . .
+RUN npm run build
+
 FROM node:alpine
 
 WORKDIR /app
 
-COPY package* .
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/dist ./dist
 
-RUN npm ci
-
-COPY . .
-
-ENTRYPOINT [ "npm","run","timestamp" ]
+ENTRYPOINT ["node", "dist/timestamp.js"]
