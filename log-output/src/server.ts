@@ -12,7 +12,7 @@ const server = http.createServer(async (req, res) => {
       const latestMessage = log.timestamp[log.timestamp.length - 1] ?? null
 
       res.writeHead(200, { "Content-Type": "application/json" })
-      res.end(JSON.stringify({ message: latestMessage }))
+      res.end(JSON.stringify({ message: latestMessage, pongs: log.pongs}))
       return
     } catch (error) {
       console.log(error)

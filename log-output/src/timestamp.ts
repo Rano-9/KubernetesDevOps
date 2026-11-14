@@ -22,7 +22,7 @@ const timerRun = async (): Promise<void> => {
 
   try {
     const data = await readLog()
-    const nextLog: LogEntry = { timestamp: [...data.timestamp, timestamp] }
+    const nextLog: LogEntry = {...data, timestamp: [...data.timestamp, timestamp] }
     await writeFile(logPath, JSON.stringify(nextLog))
   } catch (error) {
     console.log(error)

@@ -14,7 +14,8 @@ spec:
     spec:
       volumes:
         - name: shared-image
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: log-claim
 
       containers:
         - name: logger-server

@@ -12,10 +12,17 @@ spec:
       labels:
         app: ping-pong-app
     spec:
+      volumes:
+        - name: shared-image
+          persistentVolumeClaim:
+            claimName: log-claim
       containers:
         - name: ping-pong-app
           image: ping-pong-app:latest
           imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: shared-image
+              mountPath: "/share/"
           resources:
             requests:
               cpu: "100m"
@@ -26,3 +33,5 @@ spec:
           env:
           - name: PORT
             value: "3001"
+          - name: LOG_PATH
+            value: "/share/log.txt"
