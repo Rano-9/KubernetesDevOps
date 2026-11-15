@@ -10,7 +10,9 @@ RUN mkdir /share \
     && addgroup -S -g 1001 appgroup \
     && adduser -S -u 1001 appuser -G appgroup \
     && chown -R appuser:appgroup /app \
-    && chown -R appuser:appgroup /share
+    && chown -R appuser:appgroup /share \
+    && chmod +x /app/entrypoint.sh
 
 USER appuser
-ENTRYPOINT ["sh", "-c", "gunicorn --workers 1 --capture-output --error-logfile - app:app --bind 0.0.0.0:$PORT" ]
+
+ENTRYPOINT ["/app/entrypoint.sh"]

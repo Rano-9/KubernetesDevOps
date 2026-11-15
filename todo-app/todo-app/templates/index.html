@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1 style="text-align: center;" class="h3 mb-0">{% block title %}Todo App{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <div class="card border-0 shadow-sm">
+    <div class="card-body p-4 text-center">
+      <img
+        src="/share/placeholder.jpg"
+        alt="Shared server image"
+        class="img-fluid rounded shadow-sm"
+        style="max-width: 320px;"
+      >
+
+      <form class="mt-4" action="/add" method="post">
+        <div class="mb-3">
+          <label for="todo-input" class="form-label">Todo</label>
+          <input
+            id="todo-input"
+            name="todo"
+            type="text"
+            class="form-control"
+            placeholder="Write your todo"
+            maxlength="140"
+            required
+          >
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+
