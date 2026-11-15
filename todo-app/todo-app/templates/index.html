@@ -1,35 +1,51 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1 style="text-align: center;" class="h3 mb-0">{% block title %}Todo App{% endblock %}</h1>
+<h1 style="text-align: center;" class="h3 mb-0">{% block title %}Todo App{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
-  <div class="card border-0 shadow-sm">
-    <div class="card-body p-4 text-center">
-      <img
-        src="/share/placeholder.jpg"
-        alt="Shared server image"
-        class="img-fluid rounded shadow-sm"
-        style="max-width: 320px;"
-      >
+<div class="card border-0 shadow-sm">
+  <div class="card-body p-4 text-center">
+    <img src="/share/placeholder.jpg" alt="Shared server image" class="img-fluid rounded shadow-sm"
+      style="max-width: 320px;">
 
-      <form class="mt-4" action="/add" method="post">
-        <div class="mb-3">
-          <label for="todo-input" class="form-label">Todo</label>
-          <input
-            id="todo-input"
-            name="todo"
-            type="text"
-            class="form-control"
-            placeholder="Write your todo"
-            maxlength="140"
-            required
-          >
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-      </form>
+    <form class="mt-4" id="todo-form" action="/add-todo" method="POST">
+      <div class="mb-3">
+        <label for="todo-input" class="form-label">Todo</label>
+        <input id="todo-input" name="todo" type="text" class="form-control" placeholder="Write your todo"
+          maxlength="140" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    <script>
+      document.getElementById("todo-form").addEventListener("submit", function (event) {
+        event.preventDefault();
+        const formData = new FormData(this);
+        console.log(formData)
+        fetch(this.action, {
+          method: "POST",
+          body: formData
+        })
+          .then(response => response.json())
+          .then(data => {
+            const node = document.getElementById(data.at(-2).id)
+            const todo = data.at(-1)
+            node.insertAdjacentHTML('afterend', `<hr> <p id=${todo.id} style="text-align: left;">${todo.todo}</p>`)
+            document.getElementById("todo-input").value = "";
+          })
+          .catch(error => console.error("Error:", error));
+      });
+    </script>
+    <div>
+      <hr>
+      {% for todo in todos %}
+        <p id="{{todo.get('id')}}" style="text-align: left;">{{ todo.get("todo") }}</p>
+        {% if not loop.last%}
+          <hr>
+        {% endif%}
+      {% endfor %}
     </div>
   </div>
+</div>
 {% endblock %}
-

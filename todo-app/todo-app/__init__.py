@@ -1,12 +1,14 @@
 import atexit
 import sys
+import json
 
 from os import environ, path
 
-from flask import Flask, render_template, send_from_directory
+from flask import Flask, render_template, request, send_from_directory
 from flask_apscheduler.scheduler import BackgroundScheduler
 
 SHARE_DIR = "/share"
+
 
 def create_app(*args, **kwargs):
     app = Flask(__name__)
@@ -24,17 +26,40 @@ def create_app(*args, **kwargs):
         from . import bg_services as background
 
         scheduler.add_job(func=background.run_once, trigger="date")
-        scheduler.add_job(func=background.update_pic, trigger="cron", minute="*/10")
+        scheduler.add_job(func=background.update_pic,
+                          trigger="cron", minute="*/10")
         scheduler.start()
 
     @app.route("/")
     def index():
+        conn = db.get_db()
+        todos = conn.execute(
+            'SELECT id, todo FROM Todos'
+        ).fetchall()
+        rows = [dict(row) for row in todos]
+        print(rows,flush=True)
+        return render_template("index.html", todos=rows)
 
-        return render_template("index.html")
-
-    @app.route("/add", methods=["POST"])
+    @app.route("/add-todo", methods=["POST"])
     def add_todo():
-        return render_template("index.html")
+        print(request, flush=True)
+        conn = db.get_db()
+        form = request.form
+        todo = form.get("todo")
+        if todo:
+            conn.execute(
+                'INSERT INTO Todos (todo) VALUES (?)',
+                (todo,)
+            )
+            conn.commit()
+
+        todos = conn.execute(
+            'SELECT id, todo FROM Todos'
+        ).fetchall()
+        rows = [dict(row) for row in todos]
+        json_output = json.dumps(rows,indent=2)
+
+        return (json_output, 200)
 
     @app.route("/share/<path:filename>")
     def shared_image(filename):
