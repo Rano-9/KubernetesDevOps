@@ -12,10 +12,28 @@ spec:
       labels:
         app: todo-app
     spec:
+      securityContext:
+          runAsNonRoot: true
+          runAsUser: 1001       # set to actual UID of appuser in image
+          runAsGroup: 1001       # set to actual GID of appgroup in image
+          fsGroup: 1001
+          fsGroupChangePolicy: "OnRootMismatch"
+
+      volumes:
+        - name: shared-image
+          persistentVolumeClaim:
+            claimName: todo-claim
+
       containers:
         - name: todo-app
           image: todo-app:latest
           imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: shared-image
+              mountPath: "/share/"
+          env:
+          - name: PORT
+            value: "8080"
           resources:
             requests:
               cpu: "100m"
@@ -23,6 +41,3 @@ spec:
             limits:
               cpu: "250m"
               memory: "256Mi"
-          env:
-          - name: PORT
-            value: "8080"
