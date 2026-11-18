@@ -1,4 +1,6 @@
 .venv
+.vscode
+debug
 __pycache__
 node_modules
 database.sql

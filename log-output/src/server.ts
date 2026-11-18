@@ -1,18 +1,17 @@
 import http from "node:http"
-import { readLog, type LogEntry} from "./service.js"
+import { readPong} from "./services/service.js"
+import { timerRun, latestTimestamp } from "./timestamp.js"
 
 const port = Number(process.env.PORT) || 3000
+timerRun()
 
 const server = http.createServer(async (req, res) => {
   if (req.url === "/") {
     console.log("Request started")
-
     try {
-      const log = await readLog()
-      const latestMessage = log.timestamp[log.timestamp.length - 1] ?? null
-
+      const pongs = await readPong()
       res.writeHead(200, { "Content-Type": "application/json" })
-      res.end(JSON.stringify({ message: latestMessage, pongs: log.pongs}))
+      res.end(JSON.stringify({ timeStamp: latestTimestamp, pongs: pongs.pongs}))
       return
     } catch (error) {
       console.log(error)
@@ -21,7 +20,6 @@ const server = http.createServer(async (req, res) => {
       return
     }
   }
-
   res.writeHead(404, { "Content-Type": "application/json" })
   res.end(JSON.stringify({ error: "Not logger" }))
 })

@@ -5,11 +5,11 @@
   "license": "ISC",
   "author": "",
   "type": "module",
-  "main": "dist/index.js",
+  "main": "dist/pong.js",
   "scripts": {
     "build": "tsc --project tsconfig.json",
-    "start": "node dist/index.js",
-    "dev": "tsx src/index.ts"
+    "start": "node dist/pong.js",
+    "dev": "tsx src/pong.ts"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

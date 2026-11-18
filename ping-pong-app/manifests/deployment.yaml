@@ -12,17 +12,10 @@ spec:
       labels:
         app: ping-pong-app
     spec:
-      volumes:
-        - name: shared-image
-          persistentVolumeClaim:
-            claimName: log-claim
       containers:
         - name: ping-pong-app
           image: ping-pong-app:latest
           imagePullPolicy: IfNotPresent
-          volumeMounts:
-            - name: shared-image
-              mountPath: "/share/"
           resources:
             requests:
               cpu: "100m"
