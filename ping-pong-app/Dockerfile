@@ -1,18 +1,20 @@
-FROM node:alpine AS builder
+FROM oven/bun:alpine AS builder
+WORKDIR /app
+COPY package*.json src/pong.ts ./
+
+RUN bun install
+RUN bun build --compile  pong.ts --outfile=server
+
+FROM alpine:latest
 
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm ci
+RUN apk add --no-cache libstdc++
 
-COPY . .
-RUN npm run build
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
-FROM node:alpine
+COPY --from=builder --chown=appuser:appgroup /app/server .
 
-WORKDIR /app
+USER appuser
 
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/dist ./dist
-
-ENTRYPOINT ["npm", "start"]
+ENTRYPOINT  ["./server"]
