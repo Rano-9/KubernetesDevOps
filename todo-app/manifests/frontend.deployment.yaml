@@ -19,23 +19,13 @@ spec:
         fsGroup: 1001
         fsGroupChangePolicy: "OnRootMismatch"
 
-      volumes:
-        - name: shared-image
-          persistentVolumeClaim:
-            claimName: todo-claim
-
       containers:
         - name: todo-frontend
           image: todo-frontend:latest
           imagePullPolicy: IfNotPresent
-          volumeMounts:
-            - name: shared-image
-              mountPath: "/share/"
           env:
             - name: APP_PORT
               value: "3000"
-            - name: "VITE_API_URL"
-              value: "http://todo-backend:8080" 
           resources:
             requests:
               cpu: "100m"

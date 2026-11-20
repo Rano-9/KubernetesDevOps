@@ -18,3 +18,4 @@
 
 ### Chapter 3
 - [2.1](https://github.com/Rano-9/KubernetesDevOps/tree/2.1/)
+- [2.2](https://github.com/Rano-9/KubernetesDevOps/tree/2.2/todo-app)

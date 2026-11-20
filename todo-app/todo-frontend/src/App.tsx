@@ -13,13 +13,11 @@ function App() {
   const [flashMessage, setFlashMessage] = useState<string | null>(null)
 
   useEffect(() => {
-    console.log("TEST")
     fetchTodos()
   }, [])
 
   async function fetchTodos() {
     try {
-      console.log(API_URL)
       const response = await fetch(`${API_URL}/todos`)
       if (!response.ok) throw new Error('Failed to fetch todos')
       console.log(response)
