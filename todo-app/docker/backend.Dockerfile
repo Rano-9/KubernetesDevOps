@@ -3,7 +3,8 @@ FROM python:alpine
 ENV PORT=8888
 
 WORKDIR /app
-COPY . .
+COPY todo-app/ ./todo-app
+COPY requirements.txt entrypoint.sh ./
 
 RUN mkdir /share \
     && pip install -r requirements.txt \

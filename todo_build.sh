@@ -4,20 +4,26 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TODO_APP_DIR="$ROOT_DIR/todo-app"
+
+DOCKERFILES_DIR="$TODO_APP_DIR/docker/"
 MANIFESTS_DIR="$TODO_APP_DIR/manifests"
+
 PV_NAME="shared-pv"
 TARGET_PVC="todo-claim"
-IMAGE_NAME="todo-app:latest"
+
+BACKEND_IMAGE="todo-backend:latest"
+FRONTEND_IMAGE="todo-frontend:latest"
 K3D_CLUSTER="${K3D_CLUSTER:-k3s-default}"
 
-echo "[1/6] Removing local Docker image: $IMAGE_NAME"
-docker image rm -f "$IMAGE_NAME" 2>/dev/null || true
+echo "[1/6] Removing local Docker images: $BACKEND_IMAGE $FRONTEND_IMAGE"
+docker image rm -f "$BACKEND_IMAGE $FRONTEND_IMAGE" 2>/dev/null || true
 
-echo "[2/6] Building local Docker image: $IMAGE_NAME"
-docker build -t "$IMAGE_NAME" "$TODO_APP_DIR"
+echo "[2/6] Building local Docker images: $BACKEND_IMAGE $FRONTEND_IMAGE"
+docker build -t "$BACKEND_IMAGE" -f "$DOCKERFILES_DIR/backend.Dockerfile" "$TODO_APP_DIR"
+docker build -t "$FRONTEND_IMAGE" -f "$DOCKERFILES_DIR/frontend.Dockerfile" "$TODO_APP_DIR"
 
 echo "[3/6] Importing image into k3d cluster: $K3D_CLUSTER"
-k3d image import "$IMAGE_NAME" -c "$K3D_CLUSTER"
+k3d image import "$BACKEND_IMAGE" "$FRONTEND_IMAGE" -c "$K3D_CLUSTER"
 
 echo "[4/6] Deleting Kubernetes manifests from $MANIFESTS_DIR"
 kubectl patch pvc "$TARGET_PVC" -p '{"metadata":{"finalizers":null}}' 2>/dev/null || true

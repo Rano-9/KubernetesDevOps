@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: todo-app
+  name: todo-frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: todo-app
+      app: todo-frontend
   template:
     metadata:
       labels:
-        app: todo-app
+        app: todo-frontend
     spec:
       securityContext:
-          runAsNonRoot: true
-          runAsUser: 1001       # set to actual UID of appuser in image
-          runAsGroup: 1001       # set to actual GID of appgroup in image
-          fsGroup: 1001
-          fsGroupChangePolicy: "OnRootMismatch"
+        runAsNonRoot: true
+        runAsUser: 1001 # set to actual UID of appuser in image
+        runAsGroup: 1001 # set to actual GID of appgroup in image
+        fsGroup: 1001
+        fsGroupChangePolicy: "OnRootMismatch"
 
       volumes:
         - name: shared-image
@@ -25,17 +25,17 @@ spec:
             claimName: todo-claim
 
       containers:
-        - name: todo-app
-          image: todo-app:latest
+        - name: todo-frontend
+          image: todo-frontend:latest
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: shared-image
               mountPath: "/share/"
           env:
-          - name: PORT
-            value: "8080"
-          - name : DATABASE_PATH
-            value: "/share/db/database.sql"
+            - name: APP_PORT
+              value: "3000"
+            - name: "VITE_API_URL"
+              value: "http://todo-backend:8080" 
           resources:
             requests:
               cpu: "100m"

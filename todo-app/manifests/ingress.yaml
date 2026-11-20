@@ -4,12 +4,26 @@ metadata:
   name: todo-app-ingress
 spec:
   rules:
-  - http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: todo-app-svc
-            port:
-              number: 2345
+    - http:
+        paths:
+          - path: /todos
+            pathType: Prefix
+            backend:
+              service:
+                name: todo-backend-svc
+                port:
+                  number: 2345
+          - path: /share
+            pathType: Prefix
+            backend:
+              service:
+                name: todo-backend-svc
+                port:
+                  number: 2345
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: todo-frontend-svc
+                port:
+                  number: 1234

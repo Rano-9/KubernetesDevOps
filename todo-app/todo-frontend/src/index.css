@@ -1,0 +1,5 @@
+/* Global resets — Bootstrap provides its own, so this is minimal */
+
+body {
+  margin: 0;
+}

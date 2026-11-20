@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todo-backend
+  template:
+    metadata:
+      labels:
+        app: todo-backend
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001 # set to actual UID of appuser in image
+        runAsGroup: 1001 # set to actual GID of appgroup in image
+        fsGroup: 1001
+        fsGroupChangePolicy: "OnRootMismatch"
+
+      volumes:
+        - name: shared-image
+          persistentVolumeClaim:
+            claimName: todo-claim
+
+      containers:
+        - name: todo-backend
+          image: todo-backend:latest
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: shared-image
+              mountPath: "/share/"
+          env:
+            - name: PORT
+              value: "8080"
+            - name: DATABASE_PATH
+              value: "/share/db/database.sql"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"

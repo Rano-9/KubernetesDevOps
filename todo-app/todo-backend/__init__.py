@@ -4,7 +4,7 @@ import json
 
 from os import environ, path
 
-from flask import Flask, render_template, request, send_from_directory
+from flask import Flask, jsonify, render_template, request, send_from_directory
 from flask_apscheduler.scheduler import BackgroundScheduler
 
 SHARE_DIR = "/share"
@@ -32,34 +32,25 @@ def create_app(*args, **kwargs):
 
     @app.route("/")
     def index():
+        return "HELLO"
+
+    @app.route("/todos", methods=["GET", "POST"])
+    def get_todos():
         conn = db.get_db()
+        if request.method == "POST":
+            form = request.form
+            todo = form.get("todo")
+            if todo:
+                conn.execute(
+                    'INSERT INTO Todos (todo) VALUES (?)',
+                    (todo,)
+                )
+                conn.commit()
         todos = conn.execute(
             'SELECT id, todo FROM Todos'
         ).fetchall()
         rows = [dict(row) for row in todos]
-        print(rows,flush=True)
-        return render_template("index.html", todos=rows)
-
-    @app.route("/add-todo", methods=["POST"])
-    def add_todo():
-        print(request, flush=True)
-        conn = db.get_db()
-        form = request.form
-        todo = form.get("todo")
-        if todo:
-            conn.execute(
-                'INSERT INTO Todos (todo) VALUES (?)',
-                (todo,)
-            )
-            conn.commit()
-
-        todos = conn.execute(
-            'SELECT id, todo FROM Todos'
-        ).fetchall()
-        rows = [dict(row) for row in todos]
-        json_output = json.dumps(rows,indent=2)
-
-        return (json_output, 200)
+        return (json.dumps(rows, indent=2), 200)
 
     @app.route("/share/<path:filename>")
     def shared_image(filename):

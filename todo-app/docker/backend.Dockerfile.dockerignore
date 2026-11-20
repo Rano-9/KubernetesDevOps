@@ -1,0 +1,7 @@
+*sql
+!schema.sql
+.venv/
+__pycache__/
+manifests/
+todo-frontend/
+docker/

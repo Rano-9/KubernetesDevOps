@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+manifests/
+docker/
+todo-app/
+*/dist/
+*/node_modules/
+entrypoint.sh
+requirements.txt
