@@ -17,15 +17,17 @@ spec:
         - name: logger-server
           image: logger-server:latest
           imagePullPolicy: IfNotPresent
-
           env:
-            - name: PORT
-              value: "3000"
-            - name: PONG_PATH
-              value: "/pings"
-            - name: "BASE_URL"
-              value: "http://ping-pong-app-svc"
-
+            - name: CONFIG_PATH
+              value: "/etc/config/information.txt"
+            
+          envFrom:
+            - configMapRef:
+                name: log-configmap
+          volumeMounts:
+            - name: config
+              mountPath: "/etc/config"
+              readOnly: true
           resources:
             requests:
               cpu: "100m"
@@ -33,4 +35,7 @@ spec:
             limits:
               cpu: "250m"
               memory: "256Mi"
-
+      volumes:
+      - name: config
+        configMap:
+          name: log-configmap 
